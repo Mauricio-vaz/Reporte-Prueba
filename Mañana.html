@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="mañana.css">
+    <title>Document</title>
+</head>
+<body>
+        <h1>Información de unidades en reposo</h1>
+    
+    <label for="hormiga">HORMIGAS</label>
+    <input type="tel" id="hormiga" required>
+
+    <label for="torton">TORTON</label>
+    <input type="tel" id="torton">
+
+    <label for="rabon">RABON</label>
+    <input type="tel" id="rabon">
+
+    <label for="nissan">NISSAN</label>
+    <input type="tel" id="nissan">
+
+    <label for="planaTracto">PLANAS</label>
+    <input type="tel" id="planaTracto">
+
+    <label for="tallerl">TALLER LIMPIA</label>
+    <input type="tel" id="tallerl">
+
+    <label for="tallers">TALLER SUCIA</label>
+    <input type="tel" id="tallers">
+
+    <label for="notas">NOTA</label>
+    <input type="text" id="notas">
+
+    <div class="boton-mañana">
+    <button id="buscarB" onclick="procesarDatos()">Procesar</button>
+    <button class="copiar-mañana" onclick="copiarResultado()">Copiar</button>
+    </div>
+    <h2>Resultado</h2>
+    <p id="resulta"></p>
+    </div>
+
+    <script>
+        const mañana={
+        }
+        
+        function formatearUnidades(unidades, prefijo, threshold = 100) {
+            const listaUnidades = unidades.split(',').filter(num => num.trim() !== '');
+            const unidadesFormateadas = listaUnidades.map(num => {
+                const numero = parseInt(num.trim(), 10);
+                if (numero < threshold) {
+                    return `${prefijo}0${numero}`;
+                } else {
+                    return `${prefijo}${numero}`;
+                }
+            });
+            return unidadesFormateadas;
+        }
+
+        function obtenerFechaActual() {
+            const hoy = new Date();
+            const dia = String(hoy.getDate()).padStart(2, '0');
+            const mes = String(hoy.getMonth() + 1).padStart(2, '0'); // Enero es 0
+            const año = hoy.getFullYear().toString().slice(-4);
+            return `${dia}/${mes}/${año}`;
+        }
+
+        function procesarDatos() {
+            const hormiga = document.getElementById('hormiga').value;
+            const torton = document.getElementById('torton').value;
+            const rabon = document.getElementById('rabon').value;
+            const nissan = document.getElementById('nissan').value;
+            const planaTracto = document.getElementById('planaTracto').value;
+            const tallerl = document.getElementById('tallerl').value;
+            const tallers = document.getElementById('tallers').value;
+            const notas = document.getElementById('notas').value;
+            
+            const hormigaFormateada = formatearUnidades(hormiga, 'V-', 100);
+            const tortonFormateada = formatearUnidades(torton, 'V-', 100);
+            const rabonFormateada = formatearUnidades(rabon, 'V-', 100);
+            const nissanFormateada = formatearUnidades(nissan, 'V-', 100);
+            const planaFormateada = formatearUnidades(planaTracto, 'VP-', 100);
+            const tallerlFormateada = formatearUnidades(tallerl, 'V-', 100);
+            const tallersFormateada = formatearUnidades(tallers, 'V-', 100);
+            const carrosReposo = [...hormigaFormateada, ...tortonFormateada, ...rabonFormateada, ...nissanFormateada, ...planaFormateada];
+            //const formaNota = formatearUnidades(nota);
+        
+
+            const numeroReposo = carrosReposo.length;
+            const fechaActual = obtenerFechaActual();
+
+            let resultado = `🐔UNIDADES LIMPIAS EN EL ÁREA DE REPOSO.🚚<br>${fechaActual}<br><br>`;
+            //resultado += carrosReposo.join(', ') + `<br><br>`;
+            resultado += `*HORMIGAS*<br><br>`;
+            resultado += hormigaFormateada.join(', ')+ '<br><br>';
+            resultado += '*'+hormigaFormateada.length + ' Hormigas limpias*<br><br>';  
+            resultado += `*TORTON*<br><br>`;
+            resultado += tortonFormateada.join(', ')+ '<br><br>';
+            resultado += '*'+tortonFormateada.length + ' Torton limpios*<br><br>';
+            resultado += `*RABON*<br><br>`;
+            resultado += rabonFormateada.join(', ')+ '<br><br>';
+            resultado += '*'+rabonFormateada.length + ' Rabon limpios*<br><br>';
+            resultado += `*NISSAN*<br><br>`;
+            resultado += nissanFormateada.join(', ')+ '<br><br>';
+            resultado += '*'+nissanFormateada.length + ' Nissan limpias*<br><br>';
+            resultado += `*PLANAS*<br><br>`;
+            resultado += planaFormateada.join(', ')+ '<br><br>';
+            resultado += '*'+planaFormateada.length + ' Planas limpias*<br><br>';
+            resultado += `*UNIDADES LIMPIAS EN TALLER*<br><br>`;
+            resultado += tallerlFormateada.join(', ') +'<br><br>';
+            resultado += '*'+tallerlFormateada.length + ' Unidades Limpias En Taller*<br><br>';
+            resultado += `*UNIDADES SUCIAS EN TALLER*<br><br>`;
+            resultado += tallersFormateada.join(', ') +'<br><br>';
+            resultado += '*'+tallersFormateada.length + ' Unidades Sucias En Taller*<br><br>';
+            resultado += `✅¡${numeroReposo} UNIDADES LIMPIAS EN ÁREA DE REPOSO!✅<br><br>`;
+            resultado += `*NOTA:*<br>`+ notas;
+            document.getElementById('resulta').innerHTML = resultado;
+        }
+
+        function ocultarmaña() {
+            const buttons = document.querySelectorAll('.contenedor .boton');
+            buttons.forEach(boton => boton.style.display = 'none');
+            const titu = document.querySelectorAll('.titulo');
+            titu.forEach(titu => titu.style.display = 'none');
+            
+            const mostrar = document.querySelectorAll('.reporte-mañana');
+            mostrar.forEach(mostrar => mostrar.style.display = 'grid');
+        }
+        
+        function copiarResultado() {
+            const resulta = document.getElementById('resulta').innerText;
+            const textarea = document.createElement('textarea');
+            textarea.value = resulta;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            alert('Copiado en el portapapeles');
+        }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    procesarDatos();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

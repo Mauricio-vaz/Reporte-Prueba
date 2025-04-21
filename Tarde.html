@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="tarde.css">
+    <title>Document</title>
+</head>
+<body>
+        <h1>REPORTE DE UNIDADES DE POLLO GORDO</h1>
+    <div class="unidad-folio">
+        <label for="unidad">Número de Unidad:</label>
+        <input type="tel" id="unidad" inputmode="numeric" required>
+        <label for="folio">Folio:</label>
+        <input type="tel" id="folio" inputmode="numeric" pattern="[0-9]*" required>
+        <label for="nota"></label>
+        <input type="text" id="nota" required style="display: none;">
+    </div>
+    <div class="botones-tarde">
+    <button onclick="preguntarConsecutivo()">Agregar Folio</button>
+    <button onclick="copiar()">Copiar</button>
+</div>
+    <h2>Resultado</h2>
+    <p id="resultado"></p>
+    </div>
+
+    <script>
+        const tarde ={
+
+}
+let unidadesFolios = [];
+let unidadesCanceladas = [];
+let unidadesPendientes = []; // Unidades pendientes por liberar
+let valecom = [];//Unidades que se les dio vale para carga de combustible
+
+function obtenerFechaActual() {
+    const hoy = new Date();
+    const dia = String(hoy.getDate()).padStart(2, '0');
+    const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+    const año = hoy.getFullYear().toString().slice(-4);
+    return `${dia}/${mes}/${año}`;
+}
+
+function preguntarConsecutivo() {
+    const unidad = document.getElementById('unidad').value.trim();
+    const folio = document.getElementById('folio').value.trim();
+    const nota = document.getElementById('nota').value;
+
+    if (unidad !== "" && folio !== "") {
+        unidadesFolios.push({ unidad, folio });
+        document.getElementById('unidad').value = "";
+        document.getElementById('folio').value = "";
+        document.getElementById('unidad').focus();
+        
+        let consecutivo = confirm("¿Los folios son consecutivos?");
+        if (consecutivo) {
+            let siguienteFolio = parseInt(folio);
+            let cantidadUnidades = prompt("¿Cuántas unidades consecutivas agregar?");
+            for (let i = 1; i < parseInt(cantidadUnidades); i++) {
+                siguienteFolio++;
+                let nuevaUnidad = prompt(`Ingrese el número de la unidad ${i + 1}:`);
+                unidadesFolios.push({ unidad: nuevaUnidad, folio: siguienteFolio.toString() });
+            }
+        }
+        
+        preguntarPendientes(nota);
+    } else {
+        alert("Por favor, ingrese ambos campos.");
+    }
+}
+
+// Función para preguntar si hay unidades pendientes por liberar
+function preguntarPendientes(nota) {
+    let hayPendientes = confirm("¿Hay unidades pendientes por liberar?");
+    if (hayPendientes) {
+        let unidadesPendientesInput = prompt("Ingrese las unidades pendientes, separadas por espacios", "");
+        if (unidadesPendientesInput) {
+            unidadesPendientes = unidadesPendientesInput.split(" ").map(item => item.trim());
+        }
+    }
+
+    preguntacom(nota);
+}
+
+//Pregunta si se dio vale para carga de combustible
+function preguntacom(nota) {
+    let combus = confirm("Se otorgo vale para carga de combustible?");
+    if (combus){
+        let combusvale = prompt("Ingrese las unidades, separadas por espacios", "");
+        if (combusvale){
+            valecom = combusvale.split(" ").map(item => item.trim());
+        }
+    }
+    preguntarCancelados(nota);
+}
+
+function preguntarCancelados(nota) {
+    let hayCancelados = confirm("¿Hay unidades o folios cancelados?");
+    if (hayCancelados) {
+        let unidadesCanceladasInput = prompt("Ingrese las unidades", "");
+        if (unidadesCanceladasInput) {
+            unidadesCanceladas = unidadesCanceladasInput.split(" ").map(item => item.trim());
+        }
+    }
+    mostrarResultado(nota);
+}
+
+function mostrarResultado(nota) {
+    if (unidadesFolios.length === 0) {
+        document.getElementById('resultado').innerHTML = "No se han agregado unidades y folios.";
+        return;
+    }
+
+    const numeroviaje = unidadesFolios.length - unidadesCanceladas.length + unidadesPendientes.length;
+    const fechaActual = obtenerFechaActual();
+    
+    let resultado = `*🐓REJAS*<br>*🗓${fechaActual}*<br><br>`;
+    resultado += `*✅UNIDADES LIBERADAS PARA VIAJE DE POLLO GORDO*<br><br>`;
+
+    unidadesFolios.forEach(item => {
+        if (!unidadesCanceladas.includes(item.unidad)) {
+            resultado += `• V-0${item.unidad} Folio: ${item.folio}<br>`;
+        }
+    });
+
+    resultado += `<br>*¡${numeroviaje} VIAJES EN TOTAL DE POLLO GORDO!🐔🚛*<br>`;
+
+    if (unidadesPendientes.length > 0) {
+        resultado += `<br>⏳UNIDADES PENDIENTES POR LIBERAR:<br>`;
+        unidadesPendientes.forEach(pendiente => {
+            resultado += `• V-0${pendiente}<br>`;
+        });
+        resultado += `<br>*NOTA:*<br><br>`
+    }
+
+    if (valecom.length > 0){
+        resultado += `<br>⛽UNIDADES QUE SE LES OTORGO VALE PARA CARGA DE COMBUSTIBLE:<br>`;
+        valecom.forEach(carga => {
+            resultado += `• V-0${carga}<br>`;
+        });
+    }
+
+    if (unidadesCanceladas.length > 0) {
+        resultado += `<br>FOLIOS CANCELADOS:<br>`;
+        unidadesCanceladas.forEach(cancelado => {
+            const index = unidadesFolios.findIndex(item => item.unidad == cancelado);
+            if (index !== -1) {
+                resultado += `V-0${cancelado} Folio: ${unidadesFolios[index].folio}<br>`;
+            } else {
+                resultado += `V-0${cancelado} Folio: No Encontrado<br>`;
+            }
+        });
+    }
+
+    resultado += `${nota}`;
+    document.getElementById('resultado').innerHTML = resultado;
+}
+
+function copiar() {
+    const resultado = document.getElementById('resultado').innerText;
+    const textarea = document.createElement('textarea');
+    textarea.value = resultado;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+}
+
+document.getElementById('unidad').addEventListener('focus', function() {
+    this.type = 'number';
+});
+
+document.getElementById('folio').addEventListener('focus', function() {
+    this.type = 'number';
+});
+
+
+function mostrartarde() {
+
+    const buttons = document.querySelectorAll('.contenedor .boton');
+    buttons.forEach(boton => boton.style.display = 'none');
+    const titu = document.querySelectorAll('.titulo');
+    titu.forEach(titu => titu.style.display = 'none');
+
+    const mostrar = document.querySelectorAll('.repotarde');
+    mostrar.forEach(mostrar => mostrar.style.display = 'grid');
+}
+document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            preguntarConsecutivo();
+        }
+    });
+}); 
+    </script>
+</body>
+</html>

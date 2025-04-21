@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="ulp.css">
+    <title>ULPPG</title>
+</head>
+<body>
+    <div class="contenedor">
+        <label for="unidadL">Unidades Limpias</label>
+        <input type="tel" id="unidadL" required>
+
+        <label for="unidadS">Unidades Sucias</label>
+        <input type="tel" id="unidadS">
+
+        <button id="buscarbtn" onclick="procesardatos()">Procesar</button>
+        <button onclick="copiarResultado()">Copiar</button>
+
+        <h2>Resultado:</h2>
+        <p id="resultado"></p>
+    </div>
+    <script>
+        function formatear(unidades, prefijo, threshold =100){
+            const listaU = unidades.split(',').filter(num => num.trim() !== '');
+            const unidadesF = listaU.map(num => {
+                const numero = parseInt(num.trim(), 10);
+                if (numero < threshold){
+                    return `${prefijo}0${numero}`;
+                } else{
+                    return `${prefijo}${numero}`;
+                }
+            });
+            return unidadesF;
+        }
+
+        function fecha(){
+            const hoy = new Date();
+            const dia = String(hoy.getDate()).padStart(2, '0');
+            const mes = String(hoy.getMonth() +1).padStart(2, '0');
+            const año = hoy.getFullYear().toString().slice(-2);
+            return `*${dia}-${mes}-${año}*`;
+        }
+
+        function procesardatos() {
+    const unidadL = document.getElementById('unidadL').value;
+    const unidadS = document.getElementById('unidadS').value;
+
+    const unidadLimpia = formatear(unidadL, 'V-0', 10);
+    const listaSucia = unidadS.split(',').map(u => u.trim()).filter(u => u !== '');
+
+
+    const unidadSucia = listaSucia.map(num => {
+        const numero = parseInt(num, 10);
+        const formato = numero < 10 ? `V-00${numero}` : `V-0${numero}`;
+        let destino = prompt(`¿Dónde está la unidad: ${formato}?`);
+
+        // Si el usuario cancela o deja vacío, poner "Destino desconocido"
+        if (!destino || destino.trim() === "") {
+            destino = "Destino desconocido";
+        }
+
+        return { unidad: formato, destino: destino.trim() };
+    });
+
+    const fechaUnidad = fecha();
+
+    let resultado = `${fechaUnidad}<br>*PROGRAMACIÓN PARA VIAJE DE POLLO GORDO*<br><br>`;
+    resultado += `*UNIDADES*<br>`;
+    resultado += unidadLimpia.join(' Limpia✅<br>') + ` Limpia✅<br>`;
+
+    unidadSucia.forEach(item => {
+        resultado += `${item.unidad} Sucia❌ (${item.destino})<br>`;
+    });
+
+    resultado += `<br>`;
+    document.getElementById('resultado').innerHTML = resultado;
+}
+
+
+        function copiarResultado(){
+            const resultado = document.getElementById('resultado').innerText;
+            const textarea = document.createElement('textarea');
+            textarea.value = resultado;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            alert('Copiando👍');
+        }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    procesardatos();
+            }
+        });
+        });
+
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="ul.css">
+    <title>ULPP</title>
+</head>
+<body>
+    <div class="contenedor">
+
+        <label for="planaL">Planas Limpias</label>
+        <input type="tel" id="planaL" required>
+
+        <label for="planaS">Planas Sucias</label>
+        <input type="tel" id="planaS" required>
+
+        <label for="unidadL">Unidades Limpias</label>
+        <input type="tel" id="unidadL" required>
+
+        <label for="unidadS">Unidades Sucias</label>
+        <input type="tel" id="unidadS">
+
+        <button id="buscarbtn" onclick="procesardatos()">Procesar</button>
+        <button onclick="copiarResultado()">Copiar</button>
+
+        <h2>Resultado:</h2>
+        <p id="resultado"></p>
+    </div>
+    <script>
+        function formatear(unidades, prefijo, threshold =100){
+            const listaU = unidades.split(',').filter(num => num.trim() !== '');
+            const unidadesF = listaU.map(num => {
+                const numero = parseInt(num.trim(), 10);
+                if (numero < threshold){
+                    return `${prefijo}0${numero}`;
+                } else{
+                    return `${prefijo}${numero}`;
+                }
+            });
+            return unidadesF;
+        }
+
+        function fecha(){
+            const hoy = new Date();
+            const dia = String(hoy.getDate()).padStart(2, '0');
+            const mes = String(hoy.getMonth() +1).padStart(2, '0');
+            const año = hoy.getFullYear().toString().slice(-2);
+            return `${dia}/${mes}/${año}`;
+        }
+
+        function procesardatos() {
+            const planasL = document.getElementById('planaL').value;
+            const planaS = document.getElementById('planaS').value;
+            const unidadL = document.getElementById('unidadL').value;
+            const unidadS = document.getElementById('unidadS').value;
+
+            const planaLimpia = formatear(planasL, 'VP-', 10);
+            const planaSucia = formatear(planaS, 'VP-', 10);
+            const unidadLimpia = formatear(unidadL, 'V-0', 10);
+            const unidadSucia = formatear(unidadS, 'V-0', 10);
+            const fechaUnidad = fecha();
+
+            let resultado = `${fechaUnidad}<br>*PROGRAMACIÓN PARA VIAJE DE PROCESADO*<br><br>`;
+            resultado += `*PLANAS*<br>`;
+            resultado += planaLimpia.join(' Limpia✅<br>') + ` Limpia✅<br>`;
+            resultado += planaSucia.join(' Sucia❌<br>') + ` Sucia❌<br><br>`;
+            resultado += `*UNIDADES*<br>`;
+            resultado += unidadLimpia.join(' Limpia✅<br>') + ` Limpia✅<br>`;
+            resultado += unidadSucia.join(' Sucia❌<br>') + ` Sucia❌<br><br>`;
+
+            document.getElementById('resultado').innerHTML= resultado;
+        }
+
+        function copiarResultado(){
+            const resultado = document.getElementById('resultado').innerText;
+            const textarea = document.createElement('textarea');
+            textarea.value = resultado;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            alert('Copiando en la papelera');
+        }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    procesardatos();
+            }
+        });
+        });
+
+    </script>
+</body>
+</html>

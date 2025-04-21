@@ -1,0 +1,85 @@
+body{
+    font-family: 'Tahoma';
+    padding: 20px;
+    background: #0b606b;
+    text-align: center;
+}
+
+.repotarde{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px;
+    text-align: center;
+}
+.unidad-folio {
+display: flex;
+flex-direction: column;
+align-items: center;
+}
+.unidad-folio input{
+    margin: 5px 0;
+    display: block;
+    background: rgba(255, 255, 255, 00.3);
+    line-height: 30px;
+    border-radius: 10px;
+    border: none;
+    width: 200px;
+    text-align: center;
+}
+
+.unidad-folio .copi{
+    
+    display: flex;
+    flex-direction: row;
+    gap: 10px;/*Espacio entre botones*/
+    align-content: center;
+    width: 80px;
+    height: 45px;
+    margin: 10px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: bold;
+    text-decoration: none;
+    background-color: #ff5252;
+    border: 2px solid #000;
+    box-shadow: 3px 3px 0px #000;
+    transition: all 0.3s ease;
+
+}
+.repotarde button{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;/*Espacio entre botones*/
+    align-content: center;
+    width: 80px;
+    height: 45px;
+    margin: 10px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: bold;
+    text-decoration: none;
+    background-color: #ff5252;
+    border: 2px solid #000;
+    box-shadow: 3px 3px 0px #000;
+    transition: all 0.3s ease;
+}
+.botones-tarde{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    text-align: center;
+}
+
+.botones-tarde button{
+    margin: 15px;
+    padding: 10px;
+    background: rgb(22, 132, 175);
+    line-height: 10px;
+    border-radius: 10px;
+    border: none;
+    width: auto;
+    height: 30px;
+
+}
